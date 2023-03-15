@@ -38,6 +38,16 @@ LOSE = -1
 #
 #  Insert your implementation of createBoard here
 #
+def createBoard(amountLines: int, amountColumns: int, amountTypesOfPieces: int):
+  board = [None] * amountLines
+  for i in range(amountLines):
+      board[i] = [0] * amountColumns
+
+  for i in range(amountLines):
+    for j in range(amountColumns):
+      board[i][j] = randrange(0, amountTypesOfPieces)
+
+  return board
 
 #
 #  Modify the board by swapping two pieces.
@@ -50,7 +60,9 @@ LOSE = -1
 #  Returns: None -- the game board passed as a parameter is modified
 #
 def swap(board, r1, c1, r2, c2):
-  pass
+  temp = board[r2][c2]
+  board[r2][c2] = board[r1][c1]
+  board[r1][c1] = temp
 
 #
 #  Modify the board to clear all occurences of a given piece, replacing them
@@ -63,11 +75,41 @@ def swap(board, r1, c1, r2, c2):
 #  Returns: None -- the game board passed as a parameter is modified
 #
 def clearAll(board, sym):
-  pass
+  for i in range(len(board)):
+    line = board[i]
+    for j in range(len(line)):
+      if line[j] == sym:
+        line[j] = EMPTY
 
 #
 #  Insert your implementations of vLineAt and hLineAt here
 #
+def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
+  sym = board[nLine][nColumn]
+  # starts with one because it counts the symbol selected
+  symsFound = 1 
+
+  # checking upwards
+  currentLine = nLine - 1
+  while currentLine > 0:
+    if board[currentLine][nColumn] == sym:
+      symsFound += 1
+    currentLine -= 1
+
+  # checking downwards
+  currentLine = nLine + 1
+  while nLine < len(board) - 1:
+    if board[currentLine][nColumn] == sym:
+      symsFound += 1
+    currentLine += 1
+
+  if symsFound >= 3:
+    return True
+
+  return False
+
+def hLineAt(board: list[list[int]], nLine, nColumn) -> bool: 
+  pass #TODO
 
 #
 #  Report whether or not two pieces on the board can be swapped.  The function
