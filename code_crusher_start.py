@@ -91,16 +91,18 @@ def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
 
   # checking upwards
   currentLine = nLine - 1
-  while currentLine > 0:
-    if board[currentLine][nColumn] == sym:
-      symsFound += 1
+  while currentLine >= 0:
+    if board[currentLine][nColumn] != sym:
+      break
+    symsFound += 1
     currentLine -= 1
 
   # checking downwards
   currentLine = nLine + 1
-  while nLine < len(board) - 1:
-    if board[currentLine][nColumn] == sym:
-      symsFound += 1
+  while currentLine < len(board) - 1:
+    if board[currentLine][nColumn] != sym:
+      break
+    symsFound += 1
     currentLine += 1
 
   if symsFound >= 3:
@@ -109,8 +111,30 @@ def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
   return False
 
 def hLineAt(board: list[list[int]], nLine, nColumn) -> bool: 
-  pass #TODO
+  sym = board[nLine][nColumn]
+  # starts with one because it counts the symbol selected
+  symsFound = 1 
 
+  # checking upwards
+  currentColumn = nColumn - 1
+  while currentColumn >= 0:
+    if board[nLine][currentColumn] != sym:
+      break
+    symsFound += 1
+    currentColumn -= 1
+
+  # checking downwards
+  currentColumn = nColumn + 1
+  while currentColumn < len(board[nLine]) - 1:
+    if board[nLine][currentColumn] != sym:
+      break
+    symsFound += 1
+    currentColumn += 1
+
+  if symsFound >= 3:
+    return True
+
+  return False
 #
 #  Report whether or not two pieces on the board can be swapped.  The function
 #  should only return true when performing the swap results in a line being
@@ -296,6 +320,7 @@ def test_hLineAt():
         [4, 5, 1, 2, 3, 4, 5], \
         [1, 2, 3, 4, 5, 0, 1], \
         [0, 1, 2, 3, 0, 0, 0]], 5, 5, True), \
+        # Tinha que dar False? ~~~~~~~~^ estranho
       ([[2, 3, 4, 2, 3, 4], \
         [1, 2, 3, 5, 1, 2], \
         [3, 4, 5, 1, 2, 3], \
