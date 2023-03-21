@@ -84,12 +84,12 @@ def clearAll(board, sym):
 #
 #  Insert your implementations of vLineAt and hLineAt here
 #
-def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
+def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
   sym = board[nLine][nColumn]
   # starts with one because it counts the symbol selected
   symsFound = 1 
 
-  # checking upwards
+  # checking upwards  TODO: REFAZER ISSO COM FOR
   currentLine = nLine - 1
   while currentLine >= 0:
     if board[currentLine][nColumn] != sym:
@@ -97,7 +97,7 @@ def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
     symsFound += 1
     currentLine -= 1
 
-  # checking downwards
+  # checking downwards TODO: REFAZER ISSO COM FOR
   currentLine = nLine + 1
   while currentLine < len(board) - 1:
     if board[currentLine][nColumn] != sym:
@@ -105,17 +105,14 @@ def vLineAt(board: list[list[int]], nLine: int, nColumn: int) -> bool:
     symsFound += 1
     currentLine += 1
 
-  if symsFound >= 3:
-    return True
+  return symsFound >= 3
 
-  return False
-
-def hLineAt(board: list[list[int]], nLine, nColumn) -> bool: 
+def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool: 
   sym = board[nLine][nColumn]
   # starts with one because it counts the symbol selected
   symsFound = 1 
 
-  # checking upwards
+  # checking upwards  TODO: REFAZER ISSO COM FOR
   currentColumn = nColumn - 1
   while currentColumn >= 0:
     if board[nLine][currentColumn] != sym:
@@ -123,7 +120,7 @@ def hLineAt(board: list[list[int]], nLine, nColumn) -> bool:
     symsFound += 1
     currentColumn -= 1
 
-  # checking downwards
+  # checking downwards TODO: REFAZER ISSO COM FOR
   currentColumn = nColumn + 1
   while currentColumn < len(board[nLine]) - 1:
     if board[nLine][currentColumn] != sym:
@@ -131,10 +128,8 @@ def hLineAt(board: list[list[int]], nLine, nColumn) -> bool:
     symsFound += 1
     currentColumn += 1
 
-  if symsFound >= 3:
-    return True
+  return symsFound >= 3
 
-  return False
 #
 #  Report whether or not two pieces on the board can be swapped.  The function
 #  should only return true when performing the swap results in a line being
@@ -147,8 +142,15 @@ def hLineAt(board: list[list[int]], nLine, nColumn) -> bool:
 #
 #  Returns: True if the proposed swap creates a line.  False otherwise.
 #
-def canSwap(board, r1, c1, r2, c2):
-  return True
+def canSwap(board: 'list[list[int]]', r1, c1, r2, c2): # FIXME: ESSE CÓDIGO ESTÁ MUITO INEFICIENTE SOCORRO
+  import copy
+  swapedBoard: 'list[list[int]]' = copy.deepcopy(board)
+  
+  temp = swapedBoard[r1][c1]
+  swapedBoard[r1][c1] = swapedBoard[r2][c2]
+  swapedBoard[r2][c2] = temp
+
+  return hLineAt(swapedBoard, r1, c1) or vLineAt(swapedBoard, r1, c1) or hLineAt(swapedBoard, r2, c2) or vLineAt(swapedBoard, r2, c2)
 
 #
 #  Identify two adjacent positions on the board that can be swapped to 
