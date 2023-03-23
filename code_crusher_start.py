@@ -90,14 +90,14 @@ def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
   symsFound = 1 
 
   # checking upwards
-  for currentLine in range(nColumn - 1, 0, -1):
-    if board[nLine][currentLine] != sym:
+  for currentLine in range(nLine - 1, 0, -1):
+    if board[currentLine][nColumn] != sym:
       break
     symsFound += 1
 
   # checking downwards
-  for currentLine in range(nColumn + 1, len(board), 1):
-    if board[nLine][currentLine] != sym:
+  for currentLine in range(nLine + 1, len(board), 1):
+    if board[currentLine][nColumn] != sym:
       break
     symsFound += 1
 
@@ -154,10 +154,10 @@ def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
 #
 def hint(board):
   vSymsFound = 0
-  for i in range(board):
+  for i in range(len(board)):
     hSymsFound = 0
     currentLine = board[i]
-    for j in len(currentLine):
+    for j in range(len(currentLine)):
       currentColumn = currentLine[j]
 
   return -1, -1, -1, -1
