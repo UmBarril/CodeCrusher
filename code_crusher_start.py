@@ -153,8 +153,6 @@ def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
 #           is possible then -1, -1, -1, -1 is returned.
 #
 def hint(board):
-  # for currentLine in range(board):
-  #   currentColumn = 0
   return -1, -1, -1, -1
 
 ##############################################################################
