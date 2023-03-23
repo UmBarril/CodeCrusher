@@ -90,20 +90,16 @@ def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
   symsFound = 1 
 
   # checking upwards
-  currentLine = nLine - 1
-  while currentLine >= 0:
-    if board[currentLine][nColumn] != sym:
+  for currentLine in range(nColumn - 1, 0, -1):
+    if board[nLine][currentLine] != sym:
       break
     symsFound += 1
-    currentLine -= 1
 
   # checking downwards
-  currentLine = nLine + 1
-  while currentLine < len(board):
-    if board[currentLine][nColumn] != sym:
+  for currentLine in range(nColumn + 1, 0, 1):
+    if board[nLine][currentLine] != sym:
       break
     symsFound += 1
-    currentLine += 1
 
   return symsFound >= 3
 
@@ -113,20 +109,16 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
   symsFound = 1 
 
   # checking to the left  
-  currentColumn = nColumn - 1
-  while currentColumn >= 0:
+  for currentColumn in range(nColumn - 1, 0, -1):
     if board[nLine][currentColumn] != sym:
       break
     symsFound += 1
-    currentColumn -= 1
 
   # checking to the right
-  currentColumn = nColumn + 1
-  while currentColumn < len(board[nLine]):
+  for currentColumn in range(nColumn + 1, 0, 1):
     if board[nLine][currentColumn] != sym:
       break
     symsFound += 1
-    currentColumn += 1
 
   return symsFound >= 3
 
@@ -161,6 +153,8 @@ def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
 #           is possible then -1, -1, -1, -1 is returned.
 #
 def hint(board):
+  # for currentLine in range(board):
+  #   currentColumn = 0
   return -1, -1, -1, -1
 
 ##############################################################################
