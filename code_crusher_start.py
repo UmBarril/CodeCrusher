@@ -89,7 +89,7 @@ def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
   # starts with one because it counts the symbol selected
   symsFound = 1 
 
-  # checking upwards  TODO: REFAZER ISSO COM FOR
+  # checking upwards
   currentLine = nLine - 1
   while currentLine >= 0:
     if board[currentLine][nColumn] != sym:
@@ -97,9 +97,9 @@ def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
     symsFound += 1
     currentLine -= 1
 
-  # checking downwards TODO: REFAZER ISSO COM FOR
+  # checking downwards
   currentLine = nLine + 1
-  while currentLine < len(board) - 1:
+  while currentLine < len(board):
     if board[currentLine][nColumn] != sym:
       break
     symsFound += 1
@@ -112,7 +112,7 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
   # starts with one because it counts the symbol selected
   symsFound = 1 
 
-  # checking upwards  TODO: REFAZER ISSO COM FOR
+  # checking to the left  
   currentColumn = nColumn - 1
   while currentColumn >= 0:
     if board[nLine][currentColumn] != sym:
@@ -120,9 +120,9 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
     symsFound += 1
     currentColumn -= 1
 
-  # checking downwards TODO: REFAZER ISSO COM FOR
+  # checking to the right
   currentColumn = nColumn + 1
-  while currentColumn < len(board[nLine]) - 1:
+  while currentColumn < len(board[nLine]):
     if board[nLine][currentColumn] != sym:
       break
     symsFound += 1
@@ -143,14 +143,11 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
 #  Returns: True if the proposed swap creates a line.  False otherwise.
 #
 def canSwap(board: 'list[list[int]]', r1, c1, r2, c2): # FIXME: ESSE CÓDIGO ESTÁ MUITO INEFICIENTE SOCORRO
-  import copy
-  swapedBoard: 'list[list[int]]' = copy.deepcopy(board)
-  
-  temp = swapedBoard[r1][c1]
-  swapedBoard[r1][c1] = swapedBoard[r2][c2]
-  swapedBoard[r2][c2] = temp
-
-  return hLineAt(swapedBoard, r1, c1) or vLineAt(swapedBoard, r1, c1) or hLineAt(swapedBoard, r2, c2) or vLineAt(swapedBoard, r2, c2)
+  # does the swap and checks if it makes a combo then reverses it back to the previous state
+  swap(board, r1, c1, r2, c2)
+  result = hLineAt(board, r1, c1) or vLineAt(board, r1, c1) or hLineAt(board, r2, c2) or vLineAt(board, r2, c2)
+  swap(board, r1, c1, r2, c2)
+  return result
 
 #
 #  Identify two adjacent positions on the board that can be swapped to 
