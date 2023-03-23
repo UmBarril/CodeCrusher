@@ -142,7 +142,7 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
 #
 #  Returns: True if the proposed swap creates a line.  False otherwise.
 #
-def canSwap(board: 'list[list[int]]', r1, c1, r2, c2): # FIXME: ESSE CÓDIGO ESTÁ MUITO INEFICIENTE SOCORRO
+def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
   # Does the swap on the board and checks if it makes a combo. After that, it reverses the board back to the previous state.
   swap(board, r1, c1, r2, c2)
   result = hLineAt(board, r1, c1) or vLineAt(board, r1, c1) or hLineAt(board, r2, c2) or vLineAt(board, r2, c2)
