@@ -12,6 +12,9 @@ import sys
 import traceback
 import os
 
+# for music
+import pygame
+
 # Where is the 'hole' for the game board in the background image?
 HOFF = 200
 VOFF = 100
@@ -90,7 +93,7 @@ def vLineAt(board: 'list[list[int]]', nLine: int, nColumn: int) -> bool:
   symsFound = 1 
 
   # checking upwards
-  for currentLine in range(nLine - 1, 0, -1):
+  for currentLine in range(nLine - 1, -1, -1):
     if board[currentLine][nColumn] != sym:
       break
     symsFound += 1
@@ -109,7 +112,7 @@ def hLineAt(board: 'list[list[int]]', nLine, nColumn) -> bool:
   symsFound = 1 
 
   # checking to the left  
-  for currentColumn in range(nColumn - 1, 0, -1):
+  for currentColumn in range(nColumn - 1, -1, -1):
     if board[nLine][currentColumn] != sym:
       break
     symsFound += 1
@@ -153,12 +156,48 @@ def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
 #           is possible then -1, -1, -1, -1 is returned.
 #
 def hint(board):
-  vSymsFound = 0
-  for i in range(len(board)):
-    hSymsFound = 0
-    currentLine = board[i]
-    for j in range(len(currentLine)):
-      currentColumn = currentLine[j]
+  # CANSEI PQ JÁ ESTAVA DOENDO OS OLHOS
+
+  # horizontal checking
+  # amountLines = len(board)
+  # for i in range(amountLines):
+  #   amountColumns = len(board[i])
+  #   currentLine = board[i]
+  #   hSymsFound = 0
+  #   hLastSym = ""
+  #   for j in range(amountColumns):
+  #     currentSym = currentLine[j]
+  #     # A () A - checks if the middle piece can be swapped to form a line 
+  #     if j + 2 < amountColumns and currentSym == currentLine[j + 2]:
+  #         if i + 1 < amountLines and currentSym == currentLine[i + 1][j + 1]:
+  #           return i, j + 1, i + 1, j + 1
+  #         if i - 1 >= 0 and currentSym == currentLine[i - 1][j + 1]:
+  #           return i, j + 1, i - 1, j + 1
+
+  #     if currentSym == hLastSym:
+  #       hSymsFound += 1
+  #     else:
+  #       hSymsFound = 0
+
+  #     if hSymsFound == 2:
+  #       # A A () - checks if the rightmost piece can be swapped to form a line 
+  #       if j + 1 < amountColumns and board[i][j + 1] == hLastSym:
+  #         return i, j, i, j + 1
+  #       elif i + 1 < amountColumns and board[i + 1][j] == hLastSym:
+  #         return i + 1, j, i, j
+  #       elif i - 1 >= 0 and board[i - 1][j] == hLastSym:
+  #         return i - 1, j, i, j
+
+  #       # () A A - checks if the leftmost piece can be swapped to form a line 
+  #       if j - 3 >= 0 and board[i][j - 3] == hLastSym:
+  #         return i, j, i, j - 3
+  #       elif 
+  #       elif i + 1 < amountColumns and board[i + 1][j] == hLastSym:
+  #         return i + 1, j, i, j
+  #       elif i - 1 >= 0 and board[i - 1][j] == hLastSym:
+  #         return i - 1, j, i, j
+
+  #     hLastSym = currentLine[j]
 
   return -1, -1, -1, -1
 
@@ -1292,6 +1331,12 @@ def gray50(x, y, w, h):
 
 #play(target_score, max_turns, rows, cols, syms)
 def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, images, sel_images, win_image, lose_image):
+  # EXTRA: music
+  pygame.init()
+  sfx = pygame.mixer.Sound("sounds/better_call_saul_theme.mp3")
+  sfx.play(loops=-1) # forever
+  sfx.set_volume(0.05)
+
   hoff = HOFF + (8 - num_cols) * 25
   voff = VOFF + (8 - num_rows) * 25
 
@@ -1349,6 +1394,11 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
       setColor("black")
       while index < len(syncAnim):
         if index < len(syncAnim) and syncAnim[index][0] == "Win":
+          # win song
+          sfx = pygame.mixer.Sound("sounds/breaking_bad_theme.mp3")
+          sfx.play() 
+          sfx.set_volume(0.5)
+
           ct = time()
           et = syncAnim[index][1]
           if ct >= et:
@@ -1582,6 +1632,11 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
                                current_time, current_time+0.5))
               swap(board, selected_r, selected_c, second_r, second_c)
 
+
+              # meth use sfx
+              sfx = pygame.mixer.Sound("sounds/sussy_baka.mp3")
+              sfx.play()
+
               new_board = deepcopy(board)
               clearAll(new_board, target_color)
 
@@ -1607,6 +1662,11 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
                                board[selected_r][selected_c], 
                                second_r, second_c, board[second_r][second_c],
                                current_time, current_time+0.5))
+                          
+              # swap sfx
+              sfx = pygame.mixer.Sound("sounds/tuco_tight_small.mp3")
+              sfx.play()
+              sfx.set_volume(1.5)
               swap(board, selected_r, selected_c, second_r, second_c)
             else:
               syncAnim.append(("swap_and_back", selected_r, selected_c, 
