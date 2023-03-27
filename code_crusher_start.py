@@ -1748,8 +1748,6 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
       for r in range(len(board)):
         for c in range(len(board[r])):
           board[r][c] = EMPTY
-
-
         
     drawStatus(score, score_width, target_score, turns_left)
 
@@ -1884,6 +1882,7 @@ def main():
 
   bg, images, sel_images, win_image, lose_image, cc_m, cc_b = loadSpriteSheet("sprites.gif")
   setAutoUpdate(False)
+  was_pressed_last_time = False
   while not closed():
     clear()
     background("black")
@@ -1908,22 +1907,24 @@ def main():
 
     # music button
     if HAS_PYGAME:
-      if my >= y - 20 and my <= y + 20 and mx >= 345 and mx <= 455 and leftButtonPressed():
+      if my >= y - 20 and my <= y + 20 and mx >= 345 and mx <= 455 and leftButtonPressed() and not was_pressed_last_time:
         global IS_MUSIC_ON
         IS_MUSIC_ON = not IS_MUSIC_ON
       if not IS_MUSIC_ON:
         setColor("Red")
-        text(400, y, "TOGGLE MUSIC ON")
+        text(400, y, "MUSIC OFF")
       else:
         setColor("Green")
-        text(400, y, "TOGGLE MUSIC OFF")
+        text(400, y, "MUSIC ON")
     else:
       setColor("Red")
       text(400, y, "INSTALL PYGAME TO LISTEN TO THE MUSIC!")
       setColor("White")
       text(400, y + 30, "> pip install pygame")
       IS_MUSIC_ON = False
-    
+
+    was_pressed_last_time = leftButtonPressed()
+
     #play()
     update()
 
