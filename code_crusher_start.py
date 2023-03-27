@@ -12,8 +12,15 @@ import sys
 import traceback
 import os
 
-# for music
-import pygame
+IS_MUSIC_ON = True
+HAS_PYGAME = True
+try:
+  # for music
+  import pygame
+except ImportError as e:
+  print("======= INSTALL PYGAME TO LISTEN TO THE MUSIC! =======")
+  print("to install it, close the game and type on your terminal: 'pip install pygame'")
+  HAS_PYGAME = False
 
 # Where is the 'hole' for the game board in the background image?
 HOFF = 200
@@ -1233,9 +1240,10 @@ def collapse(board, syncAnim, asyncAnim, sf, num_syms):
           syncAnim.append(("destroy", r, c, old_board[r][c], l1, time(), time()+1))
           num_destroyed += 1
   
-  sfx = pygame.mixer.Sound("sounds/sussy_baka.mp3")
-  sfx.set_volume(0.1 * num_destroyed)
-  pygame.mixer.Channel(3).play(sfx)
+  if IS_MUSIC_ON:
+    sfx = pygame.mixer.Sound("sounds/sussy_baka.mp3")
+    sfx.set_volume(0.1 * num_destroyed)
+    pygame.mixer.Channel(3).play(sfx)
 
   #print("num_destroyed is", num_destroyed)
   if num_destroyed > 0:
@@ -1331,23 +1339,26 @@ def gray50(x, y, w, h):
         line(i, j, i, j)
         """
 
-background_music: pygame.mixer.Sound = None
+if IS_MUSIC_ON:
+  background_music  = None
 
-def start_background_music():
-  global background_music
-  background_music = pygame.mixer.Sound("sounds/better_call_saul_theme.mp3")
-  background_music.play(loops=-1) # forever
-  background_music.set_volume(0.05)
+  def start_background_music():
+    global background_music
+    background_music = pygame.mixer.Sound("sounds/better_call_saul_theme.mp3")
+    background_music.play(loops=-1) # forever
+    background_music.set_volume(0.05)
 
-def stop_background_music():
-  global background_music
-  background_music.stop()
+  def stop_background_music():
+    global background_music
+    background_music.stop()
 
 #play(target_score, max_turns, rows, cols, syms)
 def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, images, sel_images, win_image, lose_image):
   # EXTRA: music
-  pygame.init()
-  start_background_music()
+  if HAS_PYGAME:
+    pygame.init()
+  if IS_MUSIC_ON:
+    start_background_music()
 
   hoff = HOFF + (8 - num_cols) * 25
   voff = VOFF + (8 - num_rows) * 25
@@ -1408,7 +1419,7 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
       while index < len(syncAnim):
         if index < len(syncAnim) and syncAnim[index][0] == "Win":
           # win song
-          if not already_playing:
+          if not already_playing and IS_MUSIC_ON:
             stop_background_music()
             pygame.mixer.Sound("sounds/breaking_bad_theme.mp3").play()
             already_playing = True
@@ -1421,7 +1432,7 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
                       getHeight() // 2 - getHeight(win_image) // 2)
           index += 1
         if index < len(syncAnim) and syncAnim[index][0] == "Lose":
-          if not already_playing:
+          if not already_playing and IS_MUSIC_ON:
             stop_background_music()
             pygame.mixer.Sound("sounds/walter_confession.mp3").play()
             already_playing = True
@@ -1653,7 +1664,8 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
 
 
               # meth use sfx
-              pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/tuco_tight_small_boosted.mp3")) 
+              if IS_MUSIC_ON:
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/tuco_tight_small_boosted.mp3")) 
 
               new_board = deepcopy(board)
               clearAll(new_board, target_color)
@@ -1681,7 +1693,8 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
                                current_time, current_time+0.5))
                           
               # swap sfx
-              pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/waltuh.mp3")) 
+              if IS_MUSIC_ON:
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/waltuh.mp3")) 
 
               swap(board, selected_r, selected_c, second_r, second_c)
             else:
@@ -1690,7 +1703,8 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
                                second_r, second_c, board[second_r][second_c],
                                current_time, current_time+0.75))
               # swap and back sfx
-              pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/open_na_noor.mp3")) 
+              if IS_MUSIC_ON:
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/open_na_noor.mp3")) 
 
             selected_r = -1
             selected_c = -1
@@ -1721,7 +1735,8 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
 
     if ((('h' in keys) or ('H' in keys)) and len(syncAnim) == 0) or clickedCallSaul:
       r1, c1, r2, c2 = hint(board)
-      pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/better_call_saul_sfx.mp3")) 
+      if IS_MUSIC_ON:
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/better_call_saul_sfx.mp3")) 
       if (r1 == -1) and (c1 == -1) and (r2 == -1) and (c2 == -1):
         asyncAnim.append(("no moves", time()))
       else:
@@ -1890,6 +1905,24 @@ def main():
         setColor("White")
       text(400, y, difficulty)
       y += 70
+
+    # music button
+    if HAS_PYGAME:
+      if my >= y - 20 and my <= y + 20 and mx >= 345 and mx <= 455 and leftButtonPressed():
+        global IS_MUSIC_ON
+        IS_MUSIC_ON = not IS_MUSIC_ON
+      if not IS_MUSIC_ON:
+        setColor("Red")
+        text(400, y, "TOGGLE MUSIC ON")
+      else:
+        setColor("Green")
+        text(400, y, "TOGGLE MUSIC OFF")
+    else:
+      setColor("Red")
+      text(400, y, "INSTALL PYGAME TO LISTEN TO THE MUSIC!")
+      setColor("White")
+      text(400, y + 30, "> pip install pygame")
+      IS_MUSIC_ON = False
     
     #play()
     update()
