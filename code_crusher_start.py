@@ -156,48 +156,46 @@ def canSwap(board: 'list[list[int]]', r1, c1, r2, c2):
 #           is possible then -1, -1, -1, -1 is returned.
 #
 def hint(board):
-  # CANSEI PQ JÁ ESTAVA DOENDO OS OLHOS
-
   # horizontal checking
-  # amountLines = len(board)
-  # for i in range(amountLines):
-  #   amountColumns = len(board[i])
-  #   currentLine = board[i]
-  #   hSymsFound = 0
-  #   hLastSym = ""
-  #   for j in range(amountColumns):
-  #     currentSym = currentLine[j]
-  #     # A () A - checks if the middle piece can be swapped to form a line 
-  #     if j + 2 < amountColumns and currentSym == currentLine[j + 2]:
-  #         if i + 1 < amountLines and currentSym == currentLine[i + 1][j + 1]:
-  #           return i, j + 1, i + 1, j + 1
-  #         if i - 1 >= 0 and currentSym == currentLine[i - 1][j + 1]:
-  #           return i, j + 1, i - 1, j + 1
+  amountLines = len(board)
+  for i in range(amountLines):
+    amountColumns = len(board[i])
+    currentLine = board[i]
+    hLastSym = ""
+    for j in range(amountColumns):
+      currentSym = currentLine[j]
+      # A () A - checks if the middle piece can be swapped to form a line 
+      if j + 2 < amountColumns and currentSym == currentLine[j + 2]:
+          if i + 1 < amountLines and currentSym == board[i + 1][j + 1]:
+            return i + 1, j + 1, i, j + 1
+          if i - 1 >= 0 and currentSym == board[i - 1][j + 1]:
+            return i - 1, j + 1, i, j + 1
 
-  #     if currentSym == hLastSym:
-  #       hSymsFound += 1
-  #     else:
-  #       hSymsFound = 0
+      if currentSym == hLastSym:
+        # A A () - checks if the rightmost piece can be swapped to form a line 
+        if j + 2 < amountColumns and board[i][j + 2] == hLastSym:
+          return i, j + 1, i, j + 2
+        if j + 1 < amountColumns:
+          if i + 1 < amountLines and board[i + 1][j + 1] == hLastSym:
+            return i + 1, j + 1, i, j + 1
+          if i - 1 >= 0 and board[i - 1][j + 1] == hLastSym:
+            return i - 1, j + 1, i, j + 1
 
-  #     if hSymsFound == 2:
-  #       # A A () - checks if the rightmost piece can be swapped to form a line 
-  #       if j + 1 < amountColumns and board[i][j + 1] == hLastSym:
-  #         return i, j, i, j + 1
-  #       elif i + 1 < amountColumns and board[i + 1][j] == hLastSym:
-  #         return i + 1, j, i, j
-  #       elif i - 1 >= 0 and board[i - 1][j] == hLastSym:
-  #         return i - 1, j, i, j
+        # () A A - checks if the leftmost piece can be swapped to form a line 
+        if j - 3 >= 0 and board[i][j - 3] == hLastSym:
+            return i, j - 3, i, j - 2
+        if j - 2 >= 0:
+          if i + 1 < amountLines and board[i + 1][j - 2] == hLastSym:
+            return i + 1, j - 2, i, j - 2
+          if i - 1 >= 0 and board[i - 1][j - 2] == hLastSym:
+            return i - 1, j - 2, i, j - 2
 
-  #       # () A A - checks if the leftmost piece can be swapped to form a line 
-  #       if j - 3 >= 0 and board[i][j - 3] == hLastSym:
-  #         return i, j, i, j - 3
-  #       elif 
-  #       elif i + 1 < amountColumns and board[i + 1][j] == hLastSym:
-  #         return i + 1, j, i, j
-  #       elif i - 1 >= 0 and board[i - 1][j] == hLastSym:
-  #         return i - 1, j, i, j
+      hLastSym = currentLine[j]
 
-  #     hLastSym = currentLine[j]
+  # CANSEI DE FAZER PQ JÁ ESTAVA DOENDO OS OLHOS KKKKKKKKKKK
+  # cansei de escrever comentário em inglês tbm
+
+  # (por enquanto) ele só vai dar dicas na horizontal msm
 
   return -1, -1, -1, -1
 
@@ -1237,7 +1235,7 @@ def collapse(board, syncAnim, asyncAnim, sf, num_syms):
   
   sfx = pygame.mixer.Sound("sounds/sussy_baka.mp3")
   sfx.set_volume(0.1 * num_destroyed)
-  pygame.mixer.Channel(2).play(sfx)
+  pygame.mixer.Channel(3).play(sfx)
 
   #print("num_destroyed is", num_destroyed)
   if num_destroyed > 0:
@@ -1708,8 +1706,20 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
     drawImage(bg, 0, 0)
     drawImage(cc_m, 23, 23)
 
+    mx, my = mousePos()
     keys = getKeys()
-    if (('h' in keys) or ('H' in keys)) and len(syncAnim) == 0:
+
+    hintClickableAreaStartX = SCORE_X - score_width // 2 - 5
+    hintClickableHeight = score_width + 10
+    hintClickableAreaEndX = hintClickableAreaStartX + hintClickableHeight
+
+    hintClickableAreaStartY = SCORE_Y - 41 + 100 + 100
+    hintClickableWidth = 60 + 10
+    hintClickableAreaEndY = hintClickableAreaStartY + hintClickableWidth
+
+    clickedCallSaul = mx > hintClickableAreaStartX and mx < hintClickableAreaEndX and my > hintClickableAreaStartY and my < hintClickableAreaEndY and leftButtonPressed()
+
+    if ((('h' in keys) or ('H' in keys)) and len(syncAnim) == 0) or clickedCallSaul:
       r1, c1, r2, c2 = hint(board)
       pygame.mixer.Channel(1).play(pygame.mixer.Sound("sounds/better_call_saul_sfx.mp3")) 
       if (r1 == -1) and (c1 == -1) and (r2 == -1) and (c2 == -1):
@@ -1727,6 +1737,16 @@ def play(target_score, turns_left, num_rows, num_cols, num_syms, bg, cc_m, image
 
         
     drawStatus(score, score_width, target_score, turns_left)
+
+    # extra: draw "call saul" button
+    setColor("red")
+    rect(hintClickableAreaStartX, hintClickableAreaStartY, hintClickableHeight, hintClickableWidth)
+    setColor("white")
+    text(SCORE_X, SCORE_Y - 41 + 100 + 22 + 36 + 70, "Call Saul", "c")
+    setFont("Arial", s=15)
+    text(SCORE_X, SCORE_Y - 41 + 100 + 22 + 36 + 100, "(hint button)", "c")
+    setFont("Arial", s=24)
+
     index = 0
     while index < len(asyncAnim):
       if index < len(asyncAnim) and asyncAnim[index][0] == "no moves":
